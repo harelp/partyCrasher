@@ -1,0 +1,17 @@
+{
+  "name": "partyCrasher",
+  "version": "1.0.0",
+  "description": "An app for parties",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Harel Peri",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.17.1",
+    "mongoose": "^6.3.3"
+  }
+}
