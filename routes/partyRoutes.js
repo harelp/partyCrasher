@@ -8,7 +8,7 @@ router
 .route('/admin/:id') // -> protected route and restricted 
 .patch(partyController.updateParty)
 .delete(partyController.deleteParty);
-//router.get('/allParties', partyController.allParties) // -> protected route and restricted 
+router.get('/allParties', partyController.allParties) // -> protected route and restricted 
 
 router.post('/createParty', partyController.createParty);
 router.get('/getParty', partyController.getParty)

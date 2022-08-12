@@ -5,11 +5,17 @@ const partySchema = new mongoose.Schema({
     hostId: String,
     partyName: String,
     partyDesc: String,
-    partyLoc: String,
+    streetName: String,
+    city: String,
+    province: String,
+    postalCode: String,
+    country: String,
     partyDate: Date,
     checkIn: Date,
     thingToKnow: Array,
-    numOfPeople: Number
+    yes: Number,
+    no: Number,
+    maybe: Number
 })
 
 

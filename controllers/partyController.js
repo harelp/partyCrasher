@@ -1,11 +1,28 @@
 const Party = require('../models/partyModel');
 
-exports.createParty = async(req, res, next) => {
+
+exports.getParty = async (req, res, next) => {
+  try {
+    const parties = await Party.find();
+    res.status(200).json({
+        status: 'Success',
+        dataLength: parties.length,
+        data: parties
+        })
+  } catch (err) {
+    res.status(400).json({
+        status: 'Fail',
+        message: err
+    })
+  }
+};
+
+exports.createParty = async (req, res, next) => {
   
     try {
         const newParty = await Party.create(req.body)
         res.status(201).json({
-        status: 'success',
+        status: 'Success',
         data: newParty
         })
     }
@@ -18,7 +35,6 @@ exports.createParty = async(req, res, next) => {
       
 };
 
-
 exports.updateParty = (req, res, next) => {
   
 };
@@ -27,10 +43,19 @@ exports.deleteParty = (req, res, next) => {
   
 };
 
-exports.allParties = (req, res, next) => {
-  
-};
 
-exports.getParty = (req, res, next) => {
-  
-};
+exports.allParties = async (req, res, next) => {
+    try {
+      const parties = await Party.find();
+      res.status(200).json({
+          status: 'Success',
+          dataLength: parties.length,
+          data: parties
+          })
+    } catch (err) {
+      res.status(400).json({
+          status: 'Fail',
+          message: err
+      })
+    }
+  };
