@@ -3,7 +3,25 @@ const Party = require('../models/partyModel');
 
 exports.getParty = async (req, res, next) => {
   try {
+
+    const id = req.params.id;
+    const party = await Party.findById(id);
+    res.status(200).json({
+        status: 'Success',
+        data: party
+        })
+  } catch (err) {
+    res.status(400).json({
+        status: 'Fail',
+        message: err
+    })
+  }
+};
+
+exports.getPartyByLoc = async (req, res, next) => {
+  try {
     const parties = await Party.find();
+
     res.status(200).json({
         status: 'Success',
         dataLength: parties.length,
@@ -35,15 +53,51 @@ exports.createParty = async (req, res, next) => {
       
 };
 
-exports.updateParty = (req, res, next) => {
+exports.updateParty = async (req, res, next) => {
   
+  try {
+      const id = req.params.id;
+      const body = req.body;
+
+      const party = await Party.findByIdAndUpdate(id, body, { 
+        new: true, 
+        runValidators: true 
+      })
+
+      res.status(200).json({
+      status: 'Success',
+      data: party
+      })
+  }
+  catch (err){
+      res.status(404).json({
+          status: 'Fail',
+          message: err
+      })
+  }
+    
 };
 
-exports.deleteParty = (req, res, next) => {
-  
+exports.deleteParty = async(req, res, next) => {
+  try {
+      const id = req.params.id;
+
+      const party = await Party.findByIdAndUpdate(id, { active: false } 
+      )
+
+      res.status(200).json({
+      status: 'Party Deleted',
+      })
+  }
+  catch (err){
+      res.status(404).json({
+          status: 'Fail',
+          message: err
+      })
+  }
 };
 
-
+// ADMIN
 exports.allParties = async (req, res, next) => {
     try {
       const parties = await Party.find();

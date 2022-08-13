@@ -15,7 +15,11 @@ const partySchema = new mongoose.Schema({
     thingToKnow: Array,
     yes: Number,
     no: Number,
-    maybe: Number
+    maybe: Number,
+    active: {
+        type: Boolean,
+        required: true
+    }
 })
 
 
