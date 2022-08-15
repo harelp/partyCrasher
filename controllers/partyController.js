@@ -38,6 +38,10 @@ exports.getPartyByLoc = async (req, res, next) => {
 exports.createParty = async (req, res, next) => {
   
     try {
+      // const city = req.body.city
+      // const cityUp = city.charAt(0).toUpperCase() + city.slice(1);
+      // req.body.city = cityUp;
+      // console.log(req.body)
         const newParty = await Party.create(req.body)
         res.status(201).json({
         status: 'Success',
@@ -100,7 +104,11 @@ exports.deleteParty = async(req, res, next) => {
 // ADMIN
 exports.allParties = async (req, res, next) => {
     try {
-      const parties = await Party.find();
+      const queryObj = {...req.query};
+      const exclFlds = ['sort', 'limit'];
+      exclFlds.forEach(el => delete queryObj[el]);
+      console.log(queryObj)
+      const parties = await Party.find(queryObj);
       res.status(200).json({
           status: 'Success',
           dataLength: parties.length,

@@ -18,4 +18,3 @@ const server = app.listen(port, () => {
     const date = new Date().toISOString();
     console.log(`Started server at ${date} on port ${port}`);
   });
-
