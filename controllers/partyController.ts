@@ -1,5 +1,5 @@
 import { nextTick } from 'process';
-import { Party } from '../models/partyModel';
+import Party from '../models/partyModel';
 import { AppError } from '../utilities/appError';
 import catchAsync from '../utilities/catchAsync';
 

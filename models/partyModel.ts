@@ -84,4 +84,5 @@ const partySchema = new mongoose.Schema<IParty>({
   },
 });
 
-export const Party = mongoose.model<IParty>('Party', partySchema);
+const Party = mongoose.model<IParty>('Party', partySchema);
+export default Party;
