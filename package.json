@@ -4,7 +4,7 @@
   "description": "An app for parties",
   "main": "index.js",
   "scripts": {
-    "server": "npx ts-node server.ts"
+    "server": "nodemon server.ts"
   },
   "author": "Harel Peri",
   "license": "ISC",

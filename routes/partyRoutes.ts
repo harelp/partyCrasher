@@ -7,6 +7,7 @@ import {
   deleteParty,
   allParties,
 } from '../controllers/partyController';
+import { protectedRoute } from '../controllers/authController'
 
 const router: any = express.Router();
 // ADMIN
@@ -15,7 +16,7 @@ router
   .patch(updateParty)
   .delete(deleteParty);
 
-router.get('/allParties', allParties); // -> protected route and restricted
+router.get('/allParties', protectedRoute, allParties); // -> protected route and restricted
 
 // USER
 router.post('/createParty', createParty);
