@@ -8,9 +8,10 @@ interface IUser {
   photo: string;
   password: any;
   confPassword: any;
+  passChangedAt: Date;
   rating: number;
   partiesCreated: number;
-  premium: boolean;
+  userType: string;
   signDate: number;
   active: boolean;
 }
@@ -44,6 +45,7 @@ const userSchema = new mongoose.Schema<IUser>({
       message: 'Passwords are not the same!',
     },
   },
+  passChangedAt: Date,
   rating: {
     type: Number,
     default: 0,
@@ -52,9 +54,9 @@ const userSchema = new mongoose.Schema<IUser>({
     type: Number,
     default: 0,
   },
-  premium: {
-    type: Boolean,
-    default: false,
+  userType: {
+    type: String,
+    default: 'freemium',
   },
   signDate: {
     type: Number,
@@ -72,12 +74,21 @@ userSchema.pre('save', async function (next) {
   this.confPassword = undefined;
 });
 
-// Instance method - avail on all docs
+// Instance methods - avail on all docs
 userSchema.methods.correctPassword = async function (
   candidatePassword: string,
   userPassword: string
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPassAfter = async function (jwtTimeStamp: any) {
+  if (this.passChangedAt) {
+    const dbTime: any = this.passChangedAt.getTime() / 1000;
+    parseInt(dbTime);
+    return jwtTimeStamp < dbTime;
+  }
+  return false;
 };
 
 export default mongoose.model<IUser>('User', userSchema);
