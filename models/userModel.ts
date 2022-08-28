@@ -11,7 +11,7 @@ interface IUser {
   passChangedAt: Date;
   rating: number;
   partiesCreated: number;
-  userType: string;
+  role: string;
   signDate: number;
   active: boolean;
 }
@@ -54,8 +54,9 @@ const userSchema = new mongoose.Schema<IUser>({
     type: Number,
     default: 0,
   },
-  userType: {
+  role: {
     type: String,
+    enum: ['freemium', 'premium', 'mod', 'lead mod', 'tech', 'admin'],
     default: 'freemium',
   },
   signDate: {
@@ -85,7 +86,7 @@ userSchema.methods.correctPassword = async function (
 userSchema.methods.changedPassAfter = async function (jwtTimeStamp: any) {
   if (this.passChangedAt) {
     const dbTime: any = this.passChangedAt.getTime() / 1000;
-    parseInt(dbTime);
+    parseInt(dbTime, 10);
     return jwtTimeStamp < dbTime;
   }
   return false;
