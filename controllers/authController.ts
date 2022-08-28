@@ -5,14 +5,14 @@ import { sign, verifyToken } from '../utilities/jwt';
 import { nextTick } from 'process';
 
 export const register = catchAsync(async (req: any, res: any, next: any) => {
-  const { name, email, password, confPassword, userType } = req.body;
+  const { name, email, password, confPassword, role } = req.body;
 
   const newUser: any = await User.create({
     name,
     email,
     password,
     confPassword,
-    userType,
+    role,
   });
 
   const token: string = sign(newUser._id);
