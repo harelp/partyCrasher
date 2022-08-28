@@ -2,15 +2,17 @@ import User from '../models/userModel';
 import catchAsync from '../utilities/catchAsync';
 import { AppError } from '../utilities/appError';
 import { sign, verifyToken } from '../utilities/jwt';
+import { nextTick } from 'process';
 
 export const register = catchAsync(async (req: any, res: any, next: any) => {
-  const { name, email, password, confPassword } = req.body;
+  const { name, email, password, confPassword, userType } = req.body;
 
   const newUser: any = await User.create({
-    name: name,
-    email: email,
-    password: password,
-    confPassword: confPassword,
+    name,
+    email,
+    password,
+    confPassword,
+    userType,
   });
 
   const token: string = sign(newUser._id);
@@ -64,10 +66,20 @@ export const protectedRoute = catchAsync(async (req: any, res: any, next: any) =
   }
 
   // CHECKS IF USER CHANGED PASS
-  if (verifyUser.changedPassAfter(iat)) {
+  if (await verifyUser.changedPassAfter(iat)) {
     return next(new AppError('User changed password, please try again', 401));
   }
 
   // ACCESS TO PROTECTED ROUTE
+  req.user = verifyUser;
   next();
 });
+
+export const restricted = (...roles: Array<string>) => {
+  return (req: any, res: any, next: any) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('You do not have permission to perform this action', 403));
+    }
+    next();
+  };
+};
