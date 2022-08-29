@@ -1,19 +1,21 @@
 import User from '../models/userModel';
 import catchAsync from '../utilities/catchAsync';
 import { AppError } from '../utilities/appError';
-import signToken from '../utilities/signToken';
+import { sign, verifyToken } from '../utilities/jwt';
+import { nextTick } from 'process';
 
 export const register = catchAsync(async (req: any, res: any, next: any) => {
-  const { name, email, password, confPassword } = req.body;
+  const { name, email, password, confPassword, role } = req.body;
 
   const newUser: any = await User.create({
-    name: name,
-    email: email,
-    password: password,
-    confPassword: confPassword,
+    name,
+    email,
+    password,
+    confPassword,
+    role,
   });
 
-  const token: string = signToken(newUser._id);
+  const token: string = sign(newUser._id);
   newUser.password = undefined;
   res.status(201).json({
     status: 'Success',
@@ -33,7 +35,7 @@ export const login = catchAsync(async (req: any, res: any, next: any) => {
     return next(new AppError('Incorrect Email or Password', 401));
   }
 
-  const token: string = signToken(user._id);
+  const token: string = sign(user._id);
   user.password = undefined;
   res.status(200).json({
     status: 'Success',
@@ -41,3 +43,43 @@ export const login = catchAsync(async (req: any, res: any, next: any) => {
     user,
   });
 });
+
+export const protectedRoute = catchAsync(async (req: any, res: any, next: any) => {
+  // INIT TOKEN VAR
+  let token: string | undefined;
+
+  // CHECKS IF HEADERS HAS BEARER TOKEN AND SPLITS IT
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  // CHECKS IF TOKEN EXISTS
+  if (!token) {
+    return next(new AppError('Invalid Session, Please login', 401));
+  }
+
+  // VERIFIES USER IN DB
+  const { id, iat } = await verifyToken(token);
+  const verifyUser: any = await User.findById(id);
+  if (!verifyUser) {
+    return next(new AppError('User does not exist!', 401));
+  }
+
+  // CHECKS IF USER CHANGED PASS
+  if (await verifyUser.changedPassAfter(iat)) {
+    return next(new AppError('User changed password, please try again', 401));
+  }
+
+  // ACCESS TO PROTECTED ROUTE
+  req.user = verifyUser;
+  next();
+});
+
+export const restricted = (...roles: Array<string>) => {
+  return (req: any, res: any, next: any) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('You do not have permission to perform this action', 403));
+    }
+    next();
+  };
+};
